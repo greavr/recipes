@@ -101,7 +101,7 @@ def GetUnique(SearchValue):
 # else:
 #     print ("Local")
 #     allRecipes = LoadJson()
-allRecipes = LoadGSC("gs://rgreaves-connies-recipes/new_recipes.json")
+allRecipes = LoadGSC("gs://rgreaves-recipes/new_recipes.json")
 
 PopularResults = GetPopular(5)
 allCategories = GetUnique("Category")
