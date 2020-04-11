@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <h4>Recipe List:</h4>
+    {% for aRecipe in RecipeList|sort(attribute='Title') %}
+        {% if aRecipe.Active is defined %}
+            {% if aRecipe.Active == True %}
+                <a href="/recipe/{{ aRecipe.Title }}">{{ aRecipe.Title }}</a><br />
+            {% endif %}
+        {% else %}
+            <a href="/recipe/{{ aRecipe.Title }}">{{ aRecipe.Title }}</a><br />
+        {% endif %}
+    {% endfor %}
+       
+
+{% endblock %}
+    

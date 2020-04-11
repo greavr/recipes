@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='mystyle.css') }}">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+  <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>  
+  <script type="text/javascript" src="{{ url_for('static', filename='scripts.js') }}"></script>
+</head>
+
+<body>
+      
+    <div class="wrapper">
+        <div class="box a">
+            <h2><a href="/">Welcome to Cooking With Connie</a></h2>
+        </div>
+        <div class="box b">WORD CLOUD HERE</div>
+
+        <div class="box c">
+            <div id="Quick Links">
+                <button class="accordion" onclick="toogleAccoridan(this)">Most Popular</button>
+                <div class="panel">
+                    {% for key,value in Popular.items() %}
+                        <a href="/recipe/{{ key }}">{{ key }} ({{value}})</a><br />
+                    {% endfor %}
+                </div>
+
+                <button class="accordion" onclick="toogleAccoridan(this)">Categories</button>
+                <div class="panel">
+                    {% for key,value in Categories.items()|sort %}
+                        <a href="/category/{{ key }}">{{ key }} ({{value}})</a><br />
+                    {% endfor %}
+                </div>
+
+                <button class="accordion" onclick="toogleAccoridan(this)">Cooking Times</button>
+                <div class="panel">
+                    {% for key,value in Times.items()|sort %}
+                        <a href="/time/{{ key }}">{{ key }} ({{value}})</a><br />
+                    {% endfor %}
+                </div>
+
+                <button class="accordion" onclick="toogleAccoridan(this)">Yields</button>
+                <div class="panel">
+                    {% for key,value in Yields.items()|sort %}
+                        <a href="/yield/{{ key }}">{{ key }} ({{value}})</a><br />
+                    {% endfor %}
+                </div>
+            </div>
+            <br />
+            <div id="Search">
+                <form action="/lookup/" method="post">
+                    <input type="text" id="KeyWord" name="KeyWord" value="{{SearchWord}}"><br /><br />
+                    <input type="submit" value="Submit"><br />
+                </form>
+            </div>
+        </div>
+
+        <div class="box d">
+        {% block content %}
+
+        {% endblock %}
+        </div>
+        <div class="box e">
+            //FOOTER
+        </div>
+    </div>
+</body>
+</html>

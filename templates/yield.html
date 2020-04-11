@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    
+    <h3>Recipes With A Yield Of: {{ Yield }}</h3>
+    <div id="List">
+        {% if FilteredRecipes|length > 0 %}
+            {% for aRecipe in FilteredRecipes|sort(attribute='Title') %}
+                <a href="/recipe/{{ aRecipe.Title }}">{{ aRecipe.Title }}</a><br />
+            {% endfor %}    
+        {% else %}
+            <b>No Recipes Found</b>
+        {% endif %}
+
+    </div>
+
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% if Message|length > 0 %}<div class="Status">{{ Message }}</div><br />{% endif %}
+    <form action="/save" method="post">
+        <input type="hidden" id="original_title" name="original_title" value="{{ thisRecipe.Title }}">
+        <input type="hidden" id="Likes" name="Likes" value="{% if thisRecipe.Likes is defined %}{{thisRecipe.Likes}}{% else %}1{% endif %}">
+            <h3><input type="text" id="Title" name="Title" value="{{ thisRecipe.Title }}"></h3>
+
+        <div id="Details">
+    
+            <b>Total Time:</b> <input type="text" id="Time" name="Time" value="{{ thisRecipe.Time }}"><br />
+            <b>Yield:</b> <input type="text" id="Yield" name="Yield" value="{{ thisRecipe.Yield}}"><br />
+            {% if thisRecipe.Source is defined %}
+                {% if thisRecipe.Source.URL is defined %}
+                    <b>Source Text:</b> <input type="text" id="source_title" name="source_title" value="{{ thisRecipe.Source.Text }}"><br />
+                    <b>Source Link:</b> <input type="text" id="source_url" name="source_url" value="{{ thisRecipe.Source.URL }}"><br />
+                {% else %}
+                    <b>Source Text:</b> <input type="text" id="source_title" name="source_title" value="{{ thisRecipe.Source.Text }}"><br />
+                    <b>Source Link:</b> <input type="text" id="source_url" name="source_url" value=""><br />
+                {% endif %}
+            {% else %}
+                <b>Source Text:</b> <input type="text" id="source_title" name="source_title" value=""><br />
+                <b>Source Link:</b> <input type="text" id="source_url" name="source_url" value=""><br />
+            {% endif %}
+            <b>Category:</b> <input type="text" id="Category" name="Category" value="{{ thisRecipe.Category }}"><br />
+            {% if thisRecipe.Active is defined %}
+                {% if thisRecipe.Active %}
+                    <b>Active:</b><input type="checkbox" name="Active" id="Active" value="True" checked>
+                {% else %}
+                    <b>Active:</b><input type="checkbox" name="Active" id="Active" value="True">
+                {% endif %}
+            {% else %}
+                <b>Active:</b><input type="checkbox" name="Active" id="Active" checked>
+            {% endif %}
+    
+        </div>
+    <div id="Ingredients">
+        <h4>Ingredients</h4>
+        <table id="IngredientsTable">
+            <tr><td colspan="2"><input type="button" value="Add Another Ingredient" onClick="addInput('Ingredients');"></td></tr>
+        {% if thisRecipe.Ingredients is defined %}
+            {% for aIngredient in thisRecipe.Ingredients %}
+                <tr id="UnNumrow{{loop.index}}"><td><input type="text" name="Ingredients[]" value="{{ aIngredient }}"></td><td><button type='button' name='remove' onClick='deleteRow(this)'>X</button></td></tr>
+            {% endfor %}
+        {% else %}
+            <tr><td><b><input type="text" name="Ingredients[]" ></td></tr>
+        {% endif %}
+        </table>
+    </div>
+    <div id="Directions">
+        <h4>Directions</h4>
+        <table id="DirectionsTable">
+            <tr><td colspan="2"><input type="button" value="Add Another Step" onClick="addNumberedInput();"><br /></td></tr>
+            {% if thisRecipe.Directions is defined %}
+            {% for key, value in thisRecipe.Directions.items() %}
+                <tr id="Numrow{{loop.index}}"><td><b>Step {{ key }}: </b><input type="text" name="Directions[]" value="{{ value }}"></td><td><button type='button' name='remove' onClick='deleteRow(this)'>X</button></td></tr>
+            {% endfor %}
+        {% else %}
+            <tr><td><b><input type="text" name="Directions[]" ></td></tr>
+        {% endif %}
+        </table>
+    </div>
+        
+    <div id="Submit">
+        <input type="submit" value="Submit">
+    </div>
+
+    <div id="Delete">
+        {% if thisRecipe.Title is defined %}
+            <input type="button" value="Delete" onClick="location.href = '/delete/{{ thisRecipe.Title }}';" >
+        {% endif %}
+    </div>
+    </form>
+       
+
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+   
+    {% if SearchWord|length > 0 %}
+        <div class="box recipe_name"><h4>Results found in <b>Recipe Name</b>:</h4>
+                {% if RecipeName|length > 0 %}
+                    {% for aRecipe in RecipeName|sort(attribute='Title') %}
+                        <a href="/recipe/{{ aRecipe.Title }}">{{ aRecipe.Title }}</a><br />
+                    {% endfor %}    
+                {% else %}
+                    <em>No Recipes Found</em>
+                {% endif %}
+        </div>
+        <div class="box ingredients"><h4>Results found in <b>Ingredients</b>:</h4>
+            {% if IngredientsFilteredRecipes|length > 0 %}
+                {% for aRecipe in IngredientsFilteredRecipes|sort(attribute='Title') %}
+                    <a href="/recipe/{{ aRecipe.Title }}">{{ aRecipe.Title }}</a><br />
+                {% endfor %}    
+            {% else %}
+                <em>No Recipes Found</em>
+            {% endif %}
+        </div>
+        <div class="box directions"><h4>Results found in <b>Directions</b>:</h4>
+            {% if DirectionsFilteredRecipes|length > 0 %}
+                {% for aRecipe in DirectionsFilteredRecipes|sort(attribute='Title') %}
+                    <a href="/recipe/{{ aRecipe.Title }}">{{ aRecipe.Title }}</a><br />
+                {% endfor %}    
+            {% else %}
+                <em>No Recipes Found</em>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endblock %}

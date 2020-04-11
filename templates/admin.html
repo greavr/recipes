@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h3>Admin Page</h3>
+
+<div id="QuickTask">
+    <b>Quick: Tasks</b>
+    <a href ="/edit">Create New Recipe</a>
+</div>
+<hr />
+
+<div id="AdminRecipeList">
+    <table width="100%">
+        <tr>
+            <th>Recipe Name</th>
+            <th>Recipe Active</th>
+
+        </tr>
+        {% for aRecipe in RecipeList|sort(attribute='Title') %}
+        <tr>
+            <td><a href="/edit/{{ aRecipe.Title }}">{{ aRecipe.Title }}</a></td>
+            {% if aRecipe.Active is defined %}
+                <td><a href="/toggle-status/{{ aRecipe.Title }}">{{ aRecipe.Active }}</a></td>
+            {% else %}
+                <td><a href="/toggle-status/{{ aRecipe.Title }}">True</a></td>
+            {% endif %}
+        </tr>   
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

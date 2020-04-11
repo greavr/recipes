@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    
+    <h3>{{ thisRecipe.Title }}</h3>
+    <div id="Details">
+        <b>Total Time:</b> <a href="/time/{{ thisRecipe.Time }}">{{ thisRecipe.Time }}</a><br />
+        <b>Yield:</b> <a href="/yield/{{ thisRecipe.Yield }}">{{ thisRecipe.Yield }}</a><br />
+        {% if thisRecipe.Source is defined %}
+            {% if thisRecipe.Source.URL is defined %}
+                <b>Source:</b> <a href="{{ thisRecipe.Source.URL }}" target="_blank">{{ thisRecipe.Source.Text }}</a><br />
+            {% else %}
+                <b>Source:</b>  {{ thisRecipe.Source.Text }}<br />
+            {% endif %}
+        {% endif %}
+        <b>Category:</b> <a href="/category/{{ thisRecipe.Category }}">{{ thisRecipe.Category }}</a>
+    </div>
+    <div id="Ingredients">
+        <h4>Ingredients</h4>
+        <ul>
+        {% for aIngredient in thisRecipe.Ingredients %}
+            <li>{{ aIngredient }}</li>
+        {% endfor %}
+        </ul>
+    </div>
+    <div id="Directions">
+        <h4>Directions</h4>
+        <ol>
+        {% for key, value in thisRecipe.Directions.items() %}
+            <li>{{ value }}</li>
+        {% endfor %}
+        </ol>
+    </div>
+    <div id="Misc">
+      | <a href="/download-pdf/{{ thisRecipe.Title }}">Download PDF</a> | <a href="/like/{{ thisRecipe.Title }}">Like This Recipe</a> ({% if thisRecipe.Likes is defined %}{{thisRecipe.Likes}}{% else %}1{% endif %}) |
+    </div>
+
+       
+
+{% endblock %}
+    
