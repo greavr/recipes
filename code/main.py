@@ -100,8 +100,8 @@ def GetUnique(SearchValue):
 #     allRecipes = LoadGSC(os.getenv("GCS_LOC"))
 # else:
 #     print ("Local")
-#     allRecipes = LoadJson()
-allRecipes = LoadGSC("gs://rgreaves-recipes/new_recipes.json")
+allRecipes = LoadJson()
+# allRecipes = LoadGSC("gs://rgreaves-recipes/new_recipes.json")
 
 PopularResults = GetPopular(5)
 allCategories = GetUnique("Category")
@@ -323,5 +323,4 @@ def SaveValues():
 
 if __name__ == "__main__":
     ## Run APP
-    app.run(debug=True)
     app.run(host='0.0.0.0', port=8080)
