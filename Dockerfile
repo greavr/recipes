@@ -1,9 +1,6 @@
-FROM python
+FROM python:alpine
 
 MAINTAINER Rick Greaves "rgreaves@google.com"
-
-RUN apt-get update -y
-RUN apt-get install -y python-pip python-dev
 
 COPY /code /app
 
