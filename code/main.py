@@ -11,6 +11,7 @@ from urllib.parse import urlparse
 ## Config App
 app = Flask(__name__)
 JSON_Loc = "./new_recipes.json"
+allRecipes = None
 
 # Load All JSON
 def LoadJson():
@@ -22,15 +23,27 @@ def LoadJson():
 # Load from Bucket
 def LoadGSC(PathToLoad):
     o = urlparse(PathToLoad, allow_fragments=False)
-    gcs_bucket = "gs://"+o.netloc
-    gcs_file = o.path
+    gcs_bucket = o.netloc
+    gcs_file = o.path[1:]
+    print ("Load: " + gcs_bucket + ", " + gcs_file)
     # Load File from GCS
     storage_client = storage.Client()
     bucket = storage_client.get_bucket(gcs_bucket)
     blob = bucket.get_blob(gcs_file)
     data_to_process = blob.download_as_string()
-    data = json.load(data_to_process)
+    data = json.loads(data_to_process)
     return sorted(data, key = lambda i: i['Title'])
+
+def SaveGSC(PathToSave,sortedRecipes):
+    o = urlparse(PathToSave, allow_fragments=False)
+    gcs_bucket = o.netloc
+    gcs_file = o.path[1:]
+    print ("Save: " + gcs_bucket + ", " + gcs_file)
+    # Load File from GCS
+    storage_client = storage.Client()
+    bucket = storage_client.get_bucket(gcs_bucket)
+    blob = bucket.blob(gcs_file)
+    blob.upload_from_string(json.dumps(sortedRecipes, indent=4))
 
 # Append New Recipe
 def AddRecipe(NewRecipe):
@@ -60,15 +73,20 @@ def UpdateRecipe(UpdatedRecipe, OldTitle):
 
 def SaveJson(RecipeList):
     sortedRecipes = sorted(RecipeList, key = itemgetter('Title'))
-    with open(JSON_Loc, 'w') as outfile:
-        json.dump(sortedRecipes, outfile, indent=4)
+    #Save File
+    if os.getenv("GCS_LOC") != None:
+        SaveGSC(os.getenv("GCS_LOC"),RecipeList)
+    else:
+        with open(JSON_Loc, 'w') as outfile:
+            json.dump(sortedRecipes, outfile, indent=4)
     
     global allRecipes 
-    allRecipes = LoadJson()
+    GetJSON()
 
 # Get Most Popular Recipes
 def GetPopular(MaxReturn):
     # Get Key Pair Values
+    global allRecipes
     addResult = {}
     for aResult in allRecipes:
         if "Likes" in aResult.keys():
@@ -83,7 +101,7 @@ def GetPopular(MaxReturn):
 def GetUnique(SearchValue):
     # Function to get unique values (and Count) from list
     raw_count = {}
-
+    global allRecipes
     for aRecipes in allRecipes:
         thisCategory = aRecipes[SearchValue]
         if len(thisCategory) > 0:
@@ -94,14 +112,18 @@ def GetUnique(SearchValue):
     result = SortedDict(raw_count)
     return result
 
-# Load All Recipes (if GSC Set use that)
-# if os.getenv("GCS_LOC") != None:
-#     print ("GCS")
-#     allRecipes = LoadGSC(os.getenv("GCS_LOC"))
-# else:
-#     print ("Local")
-allRecipes = LoadJson()
-# allRecipes = LoadGSC("gs://rgreaves-recipes/new_recipes.json")
+def GetJSON():
+    global allRecipes
+    # Load All Recipes (if GSC Set use that)
+    if os.getenv("GCS_LOC") != None:
+        print ("GCS")
+        allRecipes = LoadGSC(os.getenv("GCS_LOC"))
+    else:
+        print ("Local")
+        GetJSON()
+    # allRecipes = LoadGSC("gs://rgreaves-recipes/new_recipes.json")
+
+GetJSON()
 
 PopularResults = GetPopular(5)
 allCategories = GetUnique("Category")
@@ -109,6 +131,7 @@ allTimes =  GetUnique("Time")
 allYields =  GetUnique("Yield")
 
 def FindRecipesBy(Field,SearchValue):
+    global allRecipes
     RecipesFound = []
     for aRecipe in allRecipes:
         if aRecipe[Field] == SearchValue:
@@ -132,6 +155,7 @@ def LostPages():
 @app.route("/", methods=['GET'])
 def default():
     #Display options
+    GetJSON()
     return render_template('index.html', Categories=allCategories, Times=allTimes, Yields=allYields, RecipeList=allRecipes, Popular=PopularResults)
 
 # Search for results
@@ -147,6 +171,7 @@ def LookupRedirect():
 @app.route("/like/<string:RecipeName>", methods=['GET'])
 def Like(RecipeName):
     # Increase Like count in recipe and save
+    global allRecipes
     for aRecipe in allRecipes:
         if RecipeName == aRecipe["Title"]:
             # Check if key exists
@@ -221,6 +246,7 @@ def GetCategory(cat):
 # Load Recipe Details
 @app.route("/recipe/<string:RecipeToOpen>", methods=['GET'])
 def ShowRecipe(RecipeToOpen):
+    global allRecipes
     for aRecipe in allRecipes:
         if aRecipe["Title"] == RecipeToOpen:
             recipeToDisplay = aRecipe
@@ -237,6 +263,7 @@ def Admin_home():
 # Edit Recipe Details
 @app.route("/edit/<string:RecipeToOpen>", methods=['GET'])
 def Edit(RecipeToOpen):
+    global allRecipes
     for aRecipe in allRecipes:
         if aRecipe["Title"] == RecipeToOpen:
             recipeToDisplay = aRecipe
@@ -252,6 +279,7 @@ def NewRecipe():
 # Route for toggle status
 @app.route("/toggle-status/<string:RecipeToToggle>", methods=['GET'])
 def ToggleStatus(RecipeToToggle):
+    GetJSON()
     # Set Active / In Active
     for aRecipe in allRecipes:
         if aRecipe["Title"] == RecipeToToggle:

@@ -20770,19 +20770,5 @@
         },
         "Likes": 1,
         "Active": true
-    },
-    {
-        "Title": "aa",
-        "Time": "",
-        "Category": "Poultry",
-        "Yield": "",
-        "Source": {
-            "Text": "",
-            "URL": ""
-        },
-        "Active": true,
-        "Ingredients": [],
-        "Directions": {},
-        "Likes": 1
     }
 ]
