@@ -19,7 +19,7 @@ function addInput(){
 
 function addNumberedInput(){
     NumCounter++;
-    $('#DirectionsTable').append("<tr id='Numrow"+NumCounter+"'><td><b>Step "+NumCounter+":</b> <input type='text' name='Directions[]'></td><td><button type='button' name='remove' onClick='deleteRow(this)');'>X</button></td></tr>");
+    $('#DirectionsTable').append("<tr id='Numrow"+NumCounter+"'><td><b>Step "+NumCounter+":</b> <textarea name='Directions[]'></textarea></td><td><button type='button' name='remove' onClick='deleteRow(this)');'>X</button></td></tr>");
 }
 
 function deleteRow(btn) {

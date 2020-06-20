@@ -85,15 +85,20 @@ def SaveJson(RecipeList):
 
 # Get Most Popular Recipes
 def GetPopular(MaxReturn):
-    # Get Key Pair Values
+    # Return MaxReturn number of top results
+    # Need to validate that source JSON has likes field, else defaults to 1
+
     global allRecipes
+
+    # Hold variable for results
     addResult = {}
     for aResult in allRecipes:
         if "Likes" in aResult.keys():
-            addResult[aResult["Title"]] = aResult["Likes"]
+            addResult[aResult["Title"]] = int(aResult["Likes"])
         else:
             addResult[aResult["Title"]] = 1
-        # Add to return result set
+
+    # Add to return result set
     returnResult =  dict(sorted(addResult.items(), key=operator.itemgetter(1),reverse=True)[:MaxReturn])
     return returnResult
 
@@ -120,11 +125,10 @@ def GetJSON():
         allRecipes = LoadGSC(os.getenv("GCS_LOC"))
     else:
         print ("Local")
-        GetJSON()
+        LoadJson()
     # allRecipes = LoadGSC("gs://rgreaves-recipes/new_recipes.json")
 
 GetJSON()
-
 PopularResults = GetPopular(5)
 allCategories = GetUnique("Category")
 allTimes =  GetUnique("Time")
@@ -258,6 +262,8 @@ def ShowRecipe(RecipeToOpen):
 @app.route("/admin", methods=['GET'])
 def Admin_home():
     #Display options
+    print ("Loading admin")
+    GetJSON()
     return render_template('admin.html', Popular=PopularResults, Categories=allCategories, Times=allTimes, Yields=allYields, RecipeList=allRecipes)
 
 # Edit Recipe Details
@@ -279,23 +285,27 @@ def NewRecipe():
 # Route for toggle status
 @app.route("/toggle-status/<string:RecipeToToggle>", methods=['GET'])
 def ToggleStatus(RecipeToToggle):
-    GetJSON()
     # Set Active / In Active
     for aRecipe in allRecipes:
         if aRecipe["Title"] == RecipeToToggle:
+            print("Status: Found Recipe")
             if "Active" in aRecipe.keys():
                 print(aRecipe["Active"])
                 if aRecipe["Active"]:
+                    print("Status: Deactivating Recipe")
                     aRecipe["Active"] = False
+                    UpdateRecipe(aRecipe,aRecipe["Title"])
+                    return redirect("/admin")
                 else:
+                    print("Status: Activating Recipe")
                     aRecipe["Active"] = True
+                    UpdateRecipe(aRecipe,aRecipe["Title"])
+                    return redirect("/admin")
             else:
+                print("Status: Deactivating Recipe")
                 aRecipe["Active"] = False
-                #Save Value
-            UpdateRecipe(aRecipe,aRecipe["Title"])
-            
-
-    return redirect("/admin")
+                UpdateRecipe(aRecipe,aRecipe["Title"])
+                return redirect("/admin")
 
 # Route for Delete
 @app.route("/delete/<string:RecipeToDelete>", methods=['GET', 'POST'])

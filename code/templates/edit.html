@@ -8,7 +8,7 @@
             <h3><input type="text" id="Title" name="Title" value="{{ thisRecipe.Title }}"></h3>
 
         <div id="Details">
-    
+            <h2>Details</h2>
             <b>Total Time:</b> <input type="text" id="Time" name="Time" value="{{ thisRecipe.Time }}"><br />
             <b>Yield:</b> <input type="text" id="Yield" name="Yield" value="{{ thisRecipe.Yield}}"><br />
             {% if thisRecipe.Source is defined %}
@@ -33,44 +33,43 @@
             {% else %}
                 <b>Active:</b><input type="checkbox" name="Active" id="Active" checked>
             {% endif %}
-    
-        </div>
-    <div id="Ingredients">
-        <h4>Ingredients</h4>
-        <table id="IngredientsTable">
-            <tr><td colspan="2"><input type="button" value="Add Another Ingredient" onClick="addInput('Ingredients');"></td></tr>
-        {% if thisRecipe.Ingredients is defined %}
-            {% for aIngredient in thisRecipe.Ingredients %}
-                <tr id="UnNumrow{{loop.index}}"><td><input type="text" name="Ingredients[]" value="{{ aIngredient }}"></td><td><button type='button' name='remove' onClick='deleteRow(this)'>X</button></td></tr>
-            {% endfor %}
-        {% else %}
-            <tr><td><b><input type="text" name="Ingredients[]" ></td></tr>
-        {% endif %}
-        </table>
-    </div>
-    <div id="Directions">
-        <h4>Directions</h4>
-        <table id="DirectionsTable">
-            <tr><td colspan="2"><input type="button" value="Add Another Step" onClick="addNumberedInput();"><br /></td></tr>
-            {% if thisRecipe.Directions is defined %}
-            {% for key, value in thisRecipe.Directions.items() %}
-                <tr id="Numrow{{loop.index}}"><td><b>Step {{ key }}: </b><input type="text" name="Directions[]" value="{{ value }}"></td><td><button type='button' name='remove' onClick='deleteRow(this)'>X</button></td></tr>
-            {% endfor %}
-        {% else %}
-            <tr><td><b><input type="text" name="Directions[]" ></td></tr>
-        {% endif %}
-        </table>
-    </div>
-        
-    <div id="Submit">
-        <input type="submit" value="Submit">
-    </div>
 
-    <div id="Delete">
-        {% if thisRecipe.Title is defined %}
-            <input type="button" value="Delete" onClick="location.href = '/delete/{{ thisRecipe.Title }}';" >
-        {% endif %}
-    </div>
+        </div>
+        <hr />
+        <div id="Ingredients">
+            <h2>Ingredients</h2>
+            <table id="IngredientsTable" width="100%"">
+                <tr><td colspan="2"><input type="button" value="Add Another Ingredient" onClick="addInput('Ingredients');"></td></tr>
+            {% if thisRecipe.Ingredients is defined %}
+                {% for aIngredient in thisRecipe.Ingredients %}
+                    <tr id="UnNumrow{{loop.index}}"><td><input type="text" name="Ingredients[]" value="{{ aIngredient }}"></td><td><button type='button' name='remove' onClick='deleteRow(this)'>X</button></td></tr>
+                {% endfor %}
+            {% else %}
+                <tr><td><b><textarea name="Ingredients[]"></textarea></td></tr>
+            {% endif %}
+            </table>
+        </div>
+        <hr />
+        <div id="Directions">
+            <h2>Directions</h2>
+            <table id="DirectionsTable" width="100%">
+                <tr><td colspan="2"><input type="button" value="Add Another Step" onClick="addNumberedInput();"><br /></td></tr>
+                {% if thisRecipe.Directions is defined %}
+                {% for key, value in thisRecipe.Directions.items() %}
+                    <tr id="Numrow{{loop.index}}"><td><b>Step {{ key }}: </b><textarea name="Directions[]">{{ value }}</textarea></td><td><button type='button' name='remove' onClick='deleteRow(this)'>X</button></td></tr>
+                {% endfor %}
+            {% else %}
+                <tr><td><b><textarea name="Directions[]"></textarea></td></tr>
+            {% endif %}
+            </table>
+        </div>
+        <hr />
+        <div id="Submit">
+            <input type="submit" value="Submit">  
+            {% if thisRecipe.Title is defined %}
+                <input type="button" value="Delete" onClick="location.href = '/delete/{{ thisRecipe.Title }}';" class="delete">
+            {% endif %}
+        </div>
     </form>
        
 
