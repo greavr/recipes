@@ -45,7 +45,7 @@
                     <tr id="UnNumrow{{loop.index}}"><td><input type="text" name="Ingredients[]" value="{{ aIngredient }}"></td><td><button type='button' name='remove' onClick='deleteRow(this)'>X</button></td></tr>
                 {% endfor %}
             {% else %}
-                <tr><td><b><textarea name="Ingredients[]"></textarea></td></tr>
+                <tr><td><b><input type="text" name="Ingredients[]" ></td></tr>
             {% endif %}
             </table>
         </div>

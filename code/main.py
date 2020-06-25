@@ -15,6 +15,7 @@ allRecipes = None
 
 # Load All JSON
 def LoadJson():
+    global JSON_Loc
     with open(JSON_Loc, encoding="utf8") as f:
         data = json.load(f)
     return sorted(data, key = lambda i: i['Title'])
@@ -125,8 +126,7 @@ def GetJSON():
         allRecipes = LoadGSC(os.getenv("GCS_LOC"))
     else:
         print ("Local")
-        LoadJson()
-    # allRecipes = LoadGSC("gs://rgreaves-recipes/new_recipes.json")
+        allRecipes = LoadJson()
 
 GetJSON()
 PopularResults = GetPopular(5)
@@ -160,7 +160,7 @@ def LostPages():
 def default():
     #Display options
     GetJSON()
-    return render_template('index.html', Categories=allCategories, Times=allTimes, Yields=allYields, RecipeList=allRecipes, Popular=PopularResults)
+    return render_template('index.html', Categories=json.dumps(allCategories), Times=allTimes, Yields=allYields, RecipeList=allRecipes, Popular=PopularResults)
 
 # Search for results
 @app.route("/lookup/", methods=['POST'])
