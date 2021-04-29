@@ -160,7 +160,8 @@ def LostPages():
 def default():
     #Display options
     GetJSON()
-    return render_template('index.html', Categories=json.dumps(allCategories), Times=allTimes, Yields=allYields, RecipeList=allRecipes, Popular=PopularResults)
+    print(allCategories)
+    return render_template('index.html', Categories=allCategories, Times=allTimes, Yields=allYields, RecipeList=allRecipes, Popular=PopularResults)
 
 # Search for results
 @app.route("/lookup/", methods=['POST'])
@@ -185,8 +186,6 @@ def Like(RecipeName):
                  aRecipe["Likes"] = 2
             UpdateRecipe(aRecipe, RecipeName)
             return redirect("/recipe/"+RecipeName)
-
-
 
 @app.route("/lookup/<string:KeyWord>", methods=['GET'])
 def lookup(KeyWord):
@@ -225,7 +224,6 @@ def lookup(KeyWord):
 
 
     return render_template('search.html', Categories=allCategories, Popular=PopularResults,Times=allTimes, Yields=allYields,RecipeName=RecipeName, SearchWord=KeyWord, IngredientsFilteredRecipes=IngredientsFilteredRecipes, DirectionsFilteredRecipes=DirectionsFilteredRecipes)
-
 
 # Load recipes with same time
 @app.route("/time/<string:TimeFrame>", methods=['GET'])
